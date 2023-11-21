@@ -1,27 +1,23 @@
 {
   "name": "pubby",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev-backend": "cd puppy-backend && npm run start:dev",
+    "build-backend": "cd puppy-backend && npm run build",
+    "start-backend": "cd puppy-backend && npm run start",
+    "dev-frontend": "cd puppy-frontend && npm run dev",
+    "build-frontend": "cd puppy-frontend && npm run build",
+    "start-frontend": "cd puppy-frontend && npm run start",
+    "build": "concurrently \"npm run build-backend\" \"npm run build-frontend\"",
+    "start": "concurrently \"npm run start-backend\" \"npm run start-frontend\"",
+    "dev": "concurrently \"npm run dev-backend\" \"npm run dev-frontend\""
   },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "react": "^18",
-    "react-dom": "^18",
-    "next": "14.0.0"
-  },
-  "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10",
-    "postcss": "^8",
-    "tailwindcss": "^3",
-    "eslint": "^8",
-    "eslint-config-next": "14.0.0"
+    "concurrently": "^8.2.2"
   }
 }
