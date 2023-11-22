@@ -1,5 +1,8 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { ClientSetupState } from 'src/entities/internal/instance.entity';
+import {
+  ClientSetupState,
+  EnabledStatus,
+} from 'src/entities/internal/instance.entity';
 
 registerEnumType(ClientSetupState, {
   name: 'ClientSetupState',
@@ -19,6 +22,27 @@ registerEnumType(ClientSetupState, {
   },
 });
 
+registerEnumType(EnabledStatus, {
+  name: 'EnabledStatus',
+  description: 'Represents if the instance is enabled and if not, why.',
+  valuesMap: {
+    ENABLED: {
+      description: 'The instance is enabled and ready to be used',
+    },
+    DISABLED_SETUP: {
+      description:
+        'The instance is disabled because the user has not finished setting it up',
+    },
+    DISABLED_TOKEN: {
+      description:
+        'The instance is disabled because the token is invalid or has been revoked',
+    },
+    DISABLED_OTHER: {
+      description: 'The instance is disabled for some other reason',
+    },
+  },
+});
+
 @ObjectType({
   description: 'Represents a client instance belonging to a WebUser',
 })
@@ -33,4 +57,9 @@ export class UserInstance {
     description: 'The setup state of the instance',
   })
   setupState: ClientSetupState;
+
+  @Field(() => EnabledStatus, {
+    description: 'The enabled status of the instance',
+  })
+  enabledStatus: EnabledStatus;
 }
