@@ -14,4 +14,5 @@ export default () => ({
     intents: parseInt(process.env.DEFAULT_CLIENT_INTENTS, 10) || 3276799, // default to all intents
   },
   host: process.env.HOST || 'localhost',
+  port: parseInt(process.env.PORT, 10) || 3000,
 });
