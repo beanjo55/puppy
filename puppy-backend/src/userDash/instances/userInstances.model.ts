@@ -24,7 +24,7 @@ registerEnumType(ClientSetupState, {
 
 registerEnumType(EnabledStatus, {
   name: 'EnabledStatus',
-  description: 'Represents if the instance is enabled and if not, why.',
+  description: 'Represents if the instance is enabled and if not, why',
   valuesMap: {
     ENABLED: {
       description: 'The instance is enabled and ready to be used',
