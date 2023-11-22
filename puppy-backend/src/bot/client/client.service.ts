@@ -151,7 +151,19 @@ export class ClientService {
     );
   }
 
-  public loadInstanceFromData(): Promise<Client> {}
+  public loadInstanceFromData(
+    clientId: string,
+    token: string,
+    intents?: number,
+    login = false,
+  ): Promise<Client> {
+    return this.loadInstanceFromData(
+      clientId,
+      token,
+      intents ?? this.configService.get<number>('defaultClient.intents'),
+      login,
+    );
+  }
 
   private createClient(
     token: string,
