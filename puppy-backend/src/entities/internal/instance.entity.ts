@@ -17,6 +17,13 @@ export enum ClientSetupState {
   COMPLETE = 'complete', // the instance has finished setup and is ready to login and be used
 }
 
+export enum EnabledStatus {
+  ENABLED = 'enabled',
+  DISABLED_SETUP = 'disabled_setup',
+  DISABLED_TOKEN = 'disabled_token',
+  DISABLED_OTHER = 'disabled_other',
+}
+
 @Entity()
 @Index('client_id_idx', ['clientId'], { unique: true })
 export class Instance {
@@ -25,6 +32,13 @@ export class Instance {
 
   @Column('text')
   clientId: string;
+
+  @Column({
+    type: 'enum',
+    enum: EnabledStatus,
+    default: EnabledStatus.DISABLED_SETUP,
+  })
+  enabledStatus: EnabledStatus;
 
   @Column('text')
   userId: string;
