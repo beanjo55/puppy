@@ -11,6 +11,8 @@ import {
 } from '../../entities/internal/instance.entity';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import MetricsService from '../../metrics/metrics.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 const EventNameMap: Record<keyof ClientEvents, keyof typeof events> = {
   applicationCommandPermissionsUpdate: 'ApplicationCommandPermissionUpdate',
@@ -102,6 +104,7 @@ export class ClientService implements OnModuleInit {
     private configService: ConfigService,
     @Inject('DEFAULT_CLIENT')
     private defaultClient: DefaultClientData,
+    private metricsService: MetricsService,
   ) {}
 
   onModuleInit() {
@@ -111,6 +114,11 @@ export class ClientService implements OnModuleInit {
       this.defaultClient.intents,
       true,
     );
+  }
+
+  @Cron(CronExpression.EVERY_MINUTE)
+  private reportLoadedInstances() {
+    this.metricsService.r.instancesLoaded.set(this.clients.size);
   }
 
   public async getClient(clientId: string): Promise<Client> {

@@ -11,6 +11,7 @@ import config from './config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BotModule } from './bot/bot.module';
 import { MetricsModule } from './metrics/metrics.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { MetricsModule } from './metrics/metrics.module';
       load: [config],
     }),
     EventEmitterModule.forRoot(),
+    ScheduleModule.forRoot(),
     MetricsModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -50,7 +52,6 @@ import { MetricsModule } from './metrics/metrics.module';
         };
       },
     }),
-
     AuthModule,
     BotModule,
   ],

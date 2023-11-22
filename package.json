@@ -18,6 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nestjs/schedule": "^4.0.0",
     "concurrently": "^8.2.2",
     "prom-client": "^15.0.0"
   }
