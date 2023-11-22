@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { join } from 'path';
 import config from './config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { BotModule } from './bot/bot.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      autoSchemaFile: join(process.cwd(), 'schema.gql'),
       buildSchemaOptions: {
         dateScalarMode: 'timestamp',
       },
@@ -48,6 +49,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     }),
     EventEmitterModule.forRoot(),
     AuthModule,
+    BotModule,
   ],
   controllers: [AppController],
   providers: [AppService],
