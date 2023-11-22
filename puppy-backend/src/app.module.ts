@@ -10,6 +10,7 @@ import { join } from 'path';
 import config from './config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BotModule } from './bot/bot.module';
+import { MetricsModule } from './metrics/metrics.module';
 
 @Module({
   imports: [
@@ -18,6 +19,8 @@ import { BotModule } from './bot/bot.module';
       cache: true,
       load: [config],
     }),
+    EventEmitterModule.forRoot(),
+    MetricsModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'schema.gql'),
@@ -47,7 +50,7 @@ import { BotModule } from './bot/bot.module';
         };
       },
     }),
-    EventEmitterModule.forRoot(),
+
     AuthModule,
     BotModule,
   ],

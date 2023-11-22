@@ -18,6 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "prom-client": "^15.0.0"
   }
 }
