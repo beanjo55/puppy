@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { Client } from './types/client';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { Client, DefaultClientData } from './types/client';
 import { ClientEvents, REST, Client as djsClient } from 'discord.js';
 import { API } from '@discordjs/core';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -91,7 +91,7 @@ const EventNameMap: Record<keyof ClientEvents, keyof typeof events> = {
 };
 
 @Injectable()
-export class ClientService {
+export class ClientService implements OnModuleInit {
   private clients: Map<string, Client> = new Map();
   private loadingClients: Map<string, Promise<Client>> = new Map();
 
@@ -100,9 +100,22 @@ export class ClientService {
     @InjectRepository(Instance)
     private instanceRepository: Repository<Instance>,
     private configService: ConfigService,
+    @Inject('DEFAULT_CLIENT')
+    private defaultClient: DefaultClientData,
   ) {}
 
+  onModuleInit() {
+    this.loadInstanceFromData(
+      this.defaultClient.clientId,
+      this.defaultClient.token,
+      this.defaultClient.intents,
+      true,
+    );
+  }
+
   public async getClient(clientId: string): Promise<Client> {
+    this.emitEvent('client.requested', { clientId });
+
     const client = this.clients.get(clientId);
     if (client) {
       return client;
@@ -173,6 +186,7 @@ export class ClientService {
   ) {
     const discordClient = new djsClient({ intents });
     const doLogin = () => {
+      this.emitEvent('client.login', { clientId });
       return discordClient.login();
     };
     const client: Client = {
@@ -190,6 +204,7 @@ export class ClientService {
       doLogin();
     }
 
+    this.emitEvent('client.create', { clientId });
     return client;
   }
 

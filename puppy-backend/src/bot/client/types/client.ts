@@ -8,3 +8,9 @@ export interface Client {
   isLoggedIn: boolean;
   login: () => Promise<string>;
 }
+
+export interface DefaultClientData {
+  token: string;
+  intents: number;
+  clientId: string;
+}
