@@ -11,6 +11,7 @@ export default () => ({
     token: process.env.DEFAULT_CLIENT_TOKEN,
     clientId: process.env.DEFAULT_CLIENT_ID,
     clientSecret: process.env.DEFAULT_CLIENT_SECRET,
+    intents: parseInt(process.env.DEFAULT_CLIENT_INTENTS, 10) || 3276799, // default to all intents
   },
   host: process.env.HOST || 'localhost',
 });
