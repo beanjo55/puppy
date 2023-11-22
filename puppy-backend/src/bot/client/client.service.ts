@@ -122,7 +122,7 @@ export class ClientService implements OnModuleInit {
   }
 
   public async getClient(clientId: string): Promise<Client> {
-    this.emitEvent('client.requested', { clientId });
+    this.metricsService.r.clientRequested.inc({ clientId });
 
     const client = this.clients.get(clientId);
     if (client) {
@@ -194,7 +194,7 @@ export class ClientService implements OnModuleInit {
   ) {
     const discordClient = new djsClient({ intents });
     const doLogin = () => {
-      this.emitEvent('client.login', { clientId });
+      this.metricsService.r.clientLoggedIn.inc({ clientId });
       return discordClient.login();
     };
     const client: Client = {
@@ -212,7 +212,7 @@ export class ClientService implements OnModuleInit {
       doLogin();
     }
 
-    this.emitEvent('client.create', { clientId });
+    this.metricsService.r.clientCreated.inc({ clientId });
     return client;
   }
 
