@@ -4,6 +4,13 @@ import { ClientEvents, REST, Client as djsClient } from 'discord.js';
 import { API } from '@discordjs/core';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import * as events from '../events';
+import { InjectRepository } from '@nestjs/typeorm';
+import {
+  EnabledStatus,
+  Instance,
+} from '../../entities/internal/instance.entity';
+import { Repository } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
 
 const EventNameMap: Record<keyof ClientEvents, keyof typeof events> = {
   applicationCommandPermissionsUpdate: 'ApplicationCommandPermissionUpdate',
@@ -88,7 +95,12 @@ export class ClientService {
   private clients: Map<string, Client> = new Map();
   private loadingClients: Map<string, Promise<Client>> = new Map();
 
-  constructor(private eventEmitter: EventEmitter2) {}
+  constructor(
+    private eventEmitter: EventEmitter2,
+    @InjectRepository(Instance)
+    private instanceRepository: Repository<Instance>,
+    private configService: ConfigService,
+  ) {}
 
   public async getClient(clientId: string): Promise<Client> {
     const client = this.clients.get(clientId);
@@ -109,7 +121,37 @@ export class ClientService {
     return loader;
   }
 
-  private loadInstanceFromDb(clientId: string): Promise<Client> {}
+  private async loadInstanceFromDb(
+    clientId: string,
+    login = false,
+  ): Promise<Client> {
+    const instance = await this.instanceRepository.findOne({
+      where: { clientId },
+      relations: { secrets: true },
+    });
+
+    if (!instance) {
+      throw new Error('Instance not found');
+    }
+
+    if (instance.enabledStatus !== EnabledStatus.ENABLED) {
+      throw new Error('Instance not enabled');
+    }
+
+    if (!instance.secrets) {
+      throw new Error('Instance secrets not found');
+    }
+
+    return this.createClient(
+      instance.secrets.token,
+      clientId,
+      instance.intents ??
+        this.configService.get<number>('defaultClient.intents'),
+      login,
+    );
+  }
+
+  public loadInstanceFromData(): Promise<Client> {}
 
   private createClient(
     token: string,
@@ -135,6 +177,8 @@ export class ClientService {
     if (login) {
       doLogin();
     }
+
+    return client;
   }
 
   private registerEventHandlers(client: Client) {
